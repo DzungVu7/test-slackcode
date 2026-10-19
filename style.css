@@ -1,0 +1,109 @@
+:root {
+  --bg: #f4f5f7;
+  --card: #ffffff;
+  --text: #1f2328;
+  --muted: #6b7280;
+  --border: #e5e7eb;
+  --accent: #2563eb;
+  --danger: #dc2626;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.app {
+  max-width: 520px;
+  margin: 48px auto;
+  padding: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+h1 { margin: 0 0 16px; font-size: 28px; }
+
+#new-todo-form { display: flex; gap: 8px; }
+
+#new-todo {
+  flex: 1;
+  padding: 10px 12px;
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+}
+
+#new-todo:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+
+#new-todo-form button {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  padding: 10px 16px;
+}
+
+#todo-list { list-style: none; margin: 16px 0 0; padding: 0; }
+
+.todo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.todo label { flex: 1; word-break: break-word; cursor: pointer; }
+.todo input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+.todo.completed label { color: var(--muted); text-decoration: line-through; }
+
+.todo .delete {
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-size: 20px;
+  line-height: 1;
+  padding: 2px 8px;
+}
+
+.todo .delete:hover { color: var(--danger); }
+
+.empty { color: var(--muted); text-align: center; margin: 24px 0 8px; }
+
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.filters { display: flex; gap: 4px; }
+.filters button { border-color: transparent; }
+.filters button.active { border-color: var(--accent); color: var(--accent); }
+
+#clear-completed { border-color: transparent; color: var(--muted); }
+#clear-completed:hover { color: var(--danger); }
+#clear-completed[hidden] { display: none; }
+footer[hidden] { display: none; }
+
+@media (max-width: 560px) {
+  .app { margin: 0; border-radius: 0; border-left: none; border-right: none; min-height: 100vh; padding: 16px; }
+}
