@@ -4,12 +4,15 @@ A small todo app in plain HTML, CSS and JavaScript, with no dependencies, no bui
 
 ## Features
 
-- Add, complete and delete todos
+- Add, complete, edit and delete todos
 - Filter the list by **All**, **Active** or **Completed**
 - Clear all completed todos at once
-- Live "items left" counter
+- Live "items left" counter and a progress ring showing how many todos are done
 - Todos are saved in your browser, so they survive a page reload
-- Responsive layout that goes full-width on small screens (under 560px)
+- Light and dark themes that follow your system setting
+- Keyboard and screen reader friendly: visible focus, labelled controls, and announcements when todos are added, completed, edited or deleted
+- Respects "reduce motion": the strike-through sweep and row animations are turned off
+- Responsive layout; on small screens (under 560px) the filters move to their own full-width row
 
 ## Getting started
 
@@ -33,19 +36,22 @@ then visit <http://localhost:8000>.
 | Action | How |
 | --- | --- |
 | Add a todo | Type in the "What needs doing?" box and press **Enter** or click **Add**. Empty or whitespace-only entries are ignored; text is limited to 200 characters. |
-| Complete a todo | Tick its checkbox, or click its text. Completed todos are struck through. Untick to make it active again. |
+| Complete a todo | Tick its circle, or click its text. Completed todos are struck through. Untick to make it active again. |
+| Edit a todo | Click the pencil button on the row (shown on hover or keyboard focus, always shown on touch screens). Press **Enter** or click away to save, **Escape** to cancel. Saving an empty edit keeps the old text. |
 | Delete a todo | Click the **×** button at the end of the row. |
 | Filter | Use **All**, **Active** or **Completed** in the footer. |
-| Clear completed | Click **Clear completed** in the footer (it only shows when at least one todo is completed). |
+| Clear completed | Click **Clear completed** in the footer. It shows how many will be removed and only appears when at least one todo is completed. |
 
-The footer is hidden while the list is empty. If a filter matches nothing, the list shows a short message such as "No completed todos."
+Everything works from the keyboard: **Tab** moves between controls, **Space** ticks a todo, and **Escape** clears the new-todo box. After a todo is deleted, focus moves to the next one.
+
+The footer is hidden while the list is empty, and an empty state invites you to add your first todo. If a filter matches nothing, the list says so, for example "No completed todos".
 
 ## Project structure
 
 ```
 .
-├── index.html   Page markup: the add form, the list, and the footer (counter, filters, clear button)
-├── style.css    Styling, with colors defined as CSS custom properties on :root
+├── index.html   Page markup: the header and progress ring, the add form, the list, the empty state and the footer
+├── style.css    Styling. Colors, type sizes, spacing and motion are design tokens (CSS custom properties) on :root, with a dark palette under prefers-color-scheme
 ├── app.js       App logic: state, rendering, event handling and persistence
 └── README.md
 ```
@@ -54,9 +60,9 @@ The footer is hidden while the list is empty. If a filter matches nothing, the l
 
 - **State.** `app.js` keeps an array of todos in memory, each shaped like
   `{ id, text, completed }`, plus the current filter (`all`, `active` or `completed`).
-- **Rendering.** Every change calls `render()`, which rebuilds the list from the current state and updates the counter, the filter buttons, the empty message and the visibility of the footer and the clear button. Todo text is set with `textContent`, so user input is never interpreted as HTML.
-- **Events.** Toggle and delete use event delegation: a single `change` and a single `click` listener on the list handle every row.
-- **Persistence.** Todos are stored as JSON in `localStorage` under the key `simple-todo-app.todos`. If storage is unavailable (for example in some private browsing modes) or holds invalid data, the app starts with an empty list and keeps working in memory. The selected filter is not saved and resets to **All** on reload.
+- **Rendering.** Every change calls `render()`, which syncs the list with the current state. Rows are keyed by todo id and reused, so keyboard focus and CSS transitions survive a re-render. It also updates the counter, the progress ring, the filter buttons, the empty state and the visibility of the footer and the clear button. Todo text is set with `textContent`, so user input is never interpreted as HTML.
+- **Events.** Toggle, edit and delete use event delegation: one `change`, one `click` and one `keydown` listener on the list handle every row.
+- **Persistence.** Todos are stored as JSON in `localStorage` under the key `simple-todo-app.todos`. If storage is unavailable (for example in some private browsing modes) or holds invalid data, the app starts with an empty list and keeps working in memory. Malformed entries are skipped rather than breaking the app. Changes made in another tab are picked up automatically. The selected filter is not saved and resets to **All** on reload.
 
 To reset the app, clear that key in your browser's dev tools, or run this in the console:
 
@@ -67,6 +73,7 @@ localStorage.removeItem("simple-todo-app.todos");
 ## Browser support and notes
 
 - Works in current versions of Chrome, Edge, Firefox and Safari. It uses only standard DOM APIs and ES5-style JavaScript.
+- The heading font, Bricolage Grotesque, loads from Google Fonts. Without a network connection the app falls back to your system font and works the same.
 - Data lives only in the browser you used. It does not sync across browsers or devices, and clearing site data deletes it.
 
 ## Contributing

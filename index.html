@@ -3,30 +3,63 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#eef2ee" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121816" media="(prefers-color-scheme: dark)">
   <title>Todo</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%2322675a'/%3E%3Cpath d='M9 16.5l4.5 4.5L23 11.5' fill='none' stroke='%23fff' stroke-width='3.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&display=swap">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <main class="app">
-    <h1>Todo</h1>
-
-    <form id="new-todo-form" autocomplete="off">
-      <input id="new-todo" type="text" placeholder="What needs doing?" aria-label="New todo" maxlength="200">
-      <button type="submit">Add</button>
-    </form>
-
-    <ul id="todo-list" aria-live="polite"></ul>
-    <p id="empty" class="empty">Nothing here yet.</p>
-
-    <footer id="footer">
-      <span id="count">0 items left</span>
-      <div class="filters" role="group" aria-label="Filter todos">
-        <button type="button" data-filter="all" class="active">All</button>
-        <button type="button" data-filter="active">Active</button>
-        <button type="button" data-filter="completed">Completed</button>
+    <header class="masthead">
+      <div class="masthead-text">
+        <h1>Todo</h1>
+        <p id="today" class="today"></p>
       </div>
-      <button type="button" id="clear-completed">Clear completed</button>
-    </footer>
+      <div id="progress" class="progress" role="img" aria-label="No todos yet">
+        <svg viewBox="0 0 44 44" aria-hidden="true" focusable="false">
+          <circle class="progress-track" cx="22" cy="22" r="18"></circle>
+          <circle id="progress-bar" class="progress-bar" cx="22" cy="22" r="18"></circle>
+        </svg>
+        <span id="progress-label" class="progress-label" aria-hidden="true">0/0</span>
+      </div>
+    </header>
+
+    <section class="sheet" aria-label="Todo list">
+      <form id="new-todo-form" class="composer" autocomplete="off">
+        <label for="new-todo" class="visually-hidden">New todo</label>
+        <svg class="composer-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 5v14M5 12h14"/></svg>
+        <input id="new-todo" type="text" placeholder="What needs doing?" maxlength="200" enterkeyhint="done">
+        <button type="submit" class="btn-primary">Add</button>
+      </form>
+
+      <ul id="todo-list" class="todo-list"></ul>
+
+      <div id="empty" class="empty">
+        <svg class="empty-art" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <rect x="12" y="8" width="40" height="48" rx="8"/>
+          <path d="M22 24l3 3 6-6M22 38l3 3 6-6M36 25h8M36 39h8"/>
+        </svg>
+        <p id="empty-title" class="empty-title">Nothing to do yet</p>
+        <p id="empty-hint" class="empty-hint">Add your first todo above and press Enter.</p>
+      </div>
+
+      <footer id="footer" class="toolbar">
+        <span id="count" class="count">0 items left</span>
+        <div class="filters" role="group" aria-label="Filter todos">
+          <button type="button" data-filter="all" class="active" aria-pressed="true">All</button>
+          <button type="button" data-filter="active" aria-pressed="false">Active</button>
+          <button type="button" data-filter="completed" aria-pressed="false">Completed</button>
+        </div>
+        <button type="button" id="clear-completed" class="btn-quiet">Clear completed</button>
+      </footer>
+    </section>
+
+    <p id="status" class="visually-hidden" role="status" aria-live="polite"></p>
   </main>
   <script src="app.js"></script>
 </body>
