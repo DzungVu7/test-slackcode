@@ -42,25 +42,29 @@
   --dur: 180ms;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --paper: #121816;
-    --sheet: #1a221f;
-    --ink: #e5ece8;
-    --ink-soft: #a1b0aa;
-    --ink-faint: #6f7f78;
-    --rule: #26302c;
-    --rule-strong: #34403b;
-    --pine: #6cc5ae;
-    --pine-strong: #8ad6c2;
-    --pine-wash: #1f3530;
-    --on-pine: #0d1f1a;
-    --danger: #f08a7e;
-    --danger-wash: #3a2220;
-    --focus: #8ad6c2;
-    --segment-on: #2d3a35;
-    --shadow-sheet: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 16px 40px -16px rgba(0, 0, 0, 0.6);
-  }
+/* Dark palette. The inline script in index.html (and app.js afterwards) always
+   sets data-theme to the resolved theme, "light" or "dark": an explicit choice,
+   or the system setting when the theme switch is on System. */
+:root { color-scheme: light; }
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #121816;
+  --sheet: #1a221f;
+  --ink: #e5ece8;
+  --ink-soft: #a1b0aa;
+  --ink-faint: #6f7f78;
+  --rule: #26302c;
+  --rule-strong: #34403b;
+  --pine: #6cc5ae;
+  --pine-strong: #8ad6c2;
+  --pine-wash: #1f3530;
+  --on-pine: #0d1f1a;
+  --danger: #f08a7e;
+  --danger-wash: #3a2220;
+  --focus: #8ad6c2;
+  --segment-on: #2d3a35;
+  --shadow-sheet: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 16px 40px -16px rgba(0, 0, 0, 0.6);
 }
 
 /* ---------- Base ---------- */
@@ -116,11 +120,78 @@ button { cursor: pointer; }
 /* ---------- Masthead ---------- */
 .masthead {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-end;
   justify-content: space-between;
   gap: var(--s-4);
   padding: 0 var(--s-2) var(--s-5);
 }
+
+.masthead-bar {
+  flex-basis: 100%;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Theme switch: three icon segments (native radios, so arrow keys work) */
+.theme-switch {
+  position: relative;
+  display: inline-flex;
+  gap: 2px;
+  margin: 0;
+  padding: 3px;
+  min-width: 0;
+  background: var(--sheet);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+
+.theme-switch input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.theme-switch label {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 28px;
+  color: var(--ink-soft);
+  border-radius: 9px;
+  cursor: pointer;
+  transition: color var(--dur) var(--ease), background-color var(--dur) var(--ease);
+}
+
+.theme-switch svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-switch label:hover { color: var(--ink); }
+
+.theme-switch input:checked + label {
+  color: var(--pine);
+  background: var(--pine-wash);
+}
+
+.theme-switch input:focus-visible + label {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Swap the palette in one step instead of fading some controls */
+.theme-changing *,
+.theme-changing *::before,
+.theme-changing *::after { transition: none !important; }
 
 h1 {
   margin: 0;

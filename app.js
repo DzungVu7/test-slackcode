@@ -2,6 +2,8 @@
   "use strict";
 
   var STORAGE_KEY = "simple-todo-app.todos";
+  var THEME_KEY = "simple-todo-app.theme";
+  var THEME_COLORS = { light: "#eef2ee", dark: "#121816" }; // --paper, for <meta name="theme-color">
   var MAX_LENGTH = 200;
   var RING_LENGTH = 113.1; // 2 * pi * r (r = 18), matches style.css
 
@@ -353,6 +355,80 @@
     render();
   });
 
+  /* ---------- Theme ---------- */
+  // The preference is "light", "dark" or "system" (the default). <html data-theme>
+  // always holds the resolved theme, "light" or "dark". The inline script in
+  // index.html applies it before first paint; this keeps it up to date.
+
+  var root = document.documentElement;
+  var themeInputs = document.querySelectorAll('input[name="theme"]');
+  var themeMetas = document.querySelectorAll('meta[name="theme-color"]');
+  var darkQuery = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+  var themePref = loadTheme();
+
+  function loadTheme() {
+    try {
+      var value = localStorage.getItem(THEME_KEY);
+      if (value === "light" || value === "dark" || value === "system") return value;
+    } catch (e) {
+      /* storage unavailable - fall through to the default */
+    }
+    return "system";
+  }
+
+  function saveTheme() {
+    try {
+      localStorage.setItem(THEME_KEY, themePref);
+    } catch (e) {
+      /* storage unavailable - the choice lasts until reload */
+    }
+  }
+
+  function applyTheme() {
+    var theme = themePref === "system"
+      ? (darkQuery && darkQuery.matches ? "dark" : "light")
+      : themePref;
+    root.setAttribute("data-theme", theme);
+    root.style.colorScheme = theme;
+    Array.prototype.forEach.call(themeMetas, function (meta) {
+      meta.setAttribute("content", THEME_COLORS[theme]);
+    });
+    Array.prototype.forEach.call(themeInputs, function (radio) {
+      radio.checked = radio.value === themePref;
+    });
+  }
+
+  // Switch colors in one step, without the per-control color transitions.
+  function applyThemeInstantly() {
+    root.classList.add("theme-changing");
+    applyTheme();
+    void root.offsetWidth; // flush styles while transitions are off
+    window.requestAnimationFrame(function () { root.classList.remove("theme-changing"); });
+  }
+
+  Array.prototype.forEach.call(themeInputs, function (radio) {
+    radio.addEventListener("change", function () {
+      if (!radio.checked) return;
+      themePref = radio.value;
+      saveTheme();
+      applyThemeInstantly();
+    });
+  });
+
+  // In System mode, follow the OS setting live.
+  if (darkQuery) {
+    var onSystemChange = function () { if (themePref === "system") applyThemeInstantly(); };
+    if (darkQuery.addEventListener) darkQuery.addEventListener("change", onSystemChange);
+    else if (darkQuery.addListener) darkQuery.addListener(onSystemChange); // older Safari
+  }
+
+  // Keep the theme in sync across tabs too.
+  window.addEventListener("storage", function (e) {
+    if (e.key !== THEME_KEY) return;
+    themePref = loadTheme();
+    applyThemeInstantly();
+  });
+
   /* ---------- Start ---------- */
 
   try {
@@ -361,5 +437,6 @@
     today.hidden = true;
   }
 
+  applyTheme();
   render();
 })();

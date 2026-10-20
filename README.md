@@ -9,7 +9,7 @@ A small todo app in plain HTML, CSS and JavaScript, with no dependencies, no bui
 - Clear all completed todos at once
 - Live "items left" counter and a progress ring showing how many todos are done
 - Todos are saved in your browser, so they survive a page reload
-- Light and dark themes that follow your system setting
+- Light and dark themes: pick **Light**, **Dark** or **System** with the switch in the top-right corner. System (the default) follows your OS setting, including when it changes while the page is open. The choice is remembered
 - Keyboard and screen reader friendly: visible focus, labelled controls, and announcements when todos are added, completed, edited or deleted
 - Respects "reduce motion": the strike-through sweep and row animations are turned off
 - Responsive layout; on small screens (under 560px) the filters move to their own full-width row
@@ -41,6 +41,7 @@ then visit <http://localhost:8000>.
 | Delete a todo | Click the **×** button at the end of the row. |
 | Filter | Use **All**, **Active** or **Completed** in the footer. |
 | Clear completed | Click **Clear completed** in the footer. It shows how many will be removed and only appears when at least one todo is completed. |
+| Change theme | Click the sun (Light), moon (Dark) or screen (System) icon in the top-right corner. From the keyboard, **Tab** to the switch and use the arrow keys. |
 
 Everything works from the keyboard: **Tab** moves between controls, **Space** ticks a todo, and **Escape** clears the new-todo box. After a todo is deleted, focus moves to the next one.
 
@@ -50,8 +51,8 @@ The footer is hidden while the list is empty, and an empty state invites you to 
 
 ```
 .
-├── index.html   Page markup: the header and progress ring, the add form, the list, the empty state and the footer
-├── style.css    Styling. Colors, type sizes, spacing and motion are design tokens (CSS custom properties) on :root, with a dark palette under prefers-color-scheme
+├── index.html   Page markup: the header with the theme switch and progress ring, the add form, the list, the empty state and the footer
+├── style.css    Styling. Colors, type sizes, spacing and motion are design tokens (CSS custom properties) on :root, with a dark palette under [data-theme="dark"]
 ├── app.js       App logic: state, rendering, event handling and persistence
 └── README.md
 ```
@@ -63,11 +64,13 @@ The footer is hidden while the list is empty, and an empty state invites you to 
 - **Rendering.** Every change calls `render()`, which syncs the list with the current state. Rows are keyed by todo id and reused, so keyboard focus and CSS transitions survive a re-render. It also updates the counter, the progress ring, the filter buttons, the empty state and the visibility of the footer and the clear button. Todo text is set with `textContent`, so user input is never interpreted as HTML.
 - **Events.** Toggle, edit and delete use event delegation: one `change`, one `click` and one `keydown` listener on the list handle every row.
 - **Persistence.** Todos are stored as JSON in `localStorage` under the key `simple-todo-app.todos`. If storage is unavailable (for example in some private browsing modes) or holds invalid data, the app starts with an empty list and keeps working in memory. Malformed entries are skipped rather than breaking the app. Changes made in another tab are picked up automatically. The selected filter is not saved and resets to **All** on reload.
+- **Theme.** The theme choice (`light`, `dark` or `system`) is stored separately under `simple-todo-app.theme`. A small inline script in the `<head>` of `index.html` reads it and sets `data-theme="light"` or `data-theme="dark"` on `<html>` before the stylesheet paints, so there is no flash of the wrong theme. In System mode `app.js` resolves the theme from `prefers-color-scheme` and listens for changes. It also updates `color-scheme` and the `theme-color` meta tag. If storage is unavailable the app follows the system setting.
 
-To reset the app, clear that key in your browser's dev tools, or run this in the console:
+To reset the app, clear the todos key (and optionally the theme key) in your browser's dev tools, or run this in the console:
 
 ```js
 localStorage.removeItem("simple-todo-app.todos");
+localStorage.removeItem("simple-todo-app.theme"); // optional: back to System theme
 ```
 
 ## Browser support and notes
