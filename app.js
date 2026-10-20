@@ -274,6 +274,9 @@
     if (filter === "completed") filter = "all";
     save();
     render();
+    var row = createRow(todo);
+    updateRow(row, todo);
+    list.appendChild(row);
     announce("Added “" + text + "”");
   });
 
